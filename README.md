@@ -1,6 +1,6 @@
 # BlockingTextField
 
-${ComponentClassName} is a UI component add-on for Vaadin 7.
+BlockingTextField is a UI component add-on for Vaadin 7.
 
 ## Building and running demo
 
