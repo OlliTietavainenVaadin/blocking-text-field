@@ -6,7 +6,7 @@
 	<artifactId>blocking-text-field</artifactId>
 	<packaging>jar</packaging>
 	<version>0.1</version>
-	<name>MyComponent Add-on</name>
+	<name>BlockingTextField</name>
 
 	<prerequisites>
 		<maven>3</maven>
@@ -28,24 +28,24 @@
 		<Vaadin-Addon>${project.artifactId}-${project.version}.jar</Vaadin-Addon>
 	</properties>
 
-    <!--
+
 	<organization>
-		<name>My Name</name>
-		<url>https://github.com/mygithubaccount/MyComponent/</url>
+		<name>Olli Tietäväinen</name>
+		<url>https://github.com/OlliTietavainenVaadin/blocking-text-field/</url>
 	</organization>
 
 	<scm>
-		<url>https://github.com/mygithubaccount/MyComponent</url>
-		<connection>scm:git:git://github.com/mygithubaccount/BlockingTextField.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:/mygithubaccount/${componentClassName}.git</developerConnection>
+		<url>https://github.com/OlliTietavainenVaadin/blocking-text-field</url>
+		<connection>scm:https://github.com/OlliTietavainenVaadin/blocking-text-field.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:/OlliTietavainenVaadin/blocking-text-field.git</developerConnection>
 		<tag>BlockingTextField add-on for Vaadin</tag>
 	</scm>
 
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/mygithubaccount/MyComponent/issues</url>
+		<url>https://github.com/OlliTietavainenVaadin/blocking-text-field/issues</url>
 	</issueManagement>
-    -->
+
 
 	<licenses>
 		<license>

@@ -6,7 +6,7 @@
 	<artifactId>blocking-text-field-root</artifactId>
 	<packaging>pom</packaging>
 	<version>0.1</version>
-	<name>MyComponent Add-on Root Project</name>
+	<name>BlockingTextField Add-on</name>
 
 	<prerequisites>
 		<maven>3</maven>
