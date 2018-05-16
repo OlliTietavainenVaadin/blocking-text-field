@@ -1,6 +1,6 @@
 # BlockingTextField
 
-BlockingTextField is a UI component add-on for Vaadin 7.
+BlockingTextField is a UI component add-on for Vaadin 7. You can specify different types of allowed characters in the TextField.
 
 ## Building and running demo
 
@@ -31,8 +31,6 @@ Debugging client side code in the blocking-text-field-demo project:
 
 ### Version 0.1
 * First version
-* Allows optionally specifying a minimum and maximum length for the TextField
-* Allows optionally blocking unwanted characters
-  * Alphanumerics only
-  * Limited special characters (currently hardcoded as -+#.,<>|;:_'* 
-  * ...or both of the above
+
+### Version 0.2
+* Fixed arrow keys, tab, home and end not working when there is a selection
