@@ -50,7 +50,7 @@ public class BlockingTextFieldWidget extends VTextField {
         public void onKeyDown(KeyDownEvent event) {
             // check if keystroke combination would affect validity by deletion / addition
             int keyCode = event.getNativeEvent().getKeyCode();
-            if ((keyCode == KeyCodes.KEY_SHIFT) || (keyCode == KeyCodes.KEY_ALT) || (keyCode == KeyCodes.KEY_CTRL)) {
+            if (isIgnorableOnKeyDown(keyCode)) {
                 return;
             }
             StringBuilder modified = new StringBuilder(getText());
@@ -180,6 +180,25 @@ public class BlockingTextFieldWidget extends VTextField {
         } else {
             return previousText.substring(0, index) + charCode + previousText.substring(index, previousText.length());
         }
+    }
+
+
+    private boolean isIgnorableOnKeyDown(int keyCode) {
+        switch (keyCode) {
+        case KeyCodes.KEY_SHIFT:
+        case KeyCodes.KEY_ALT:
+        case KeyCodes.KEY_CTRL:
+        case KeyCodes.KEY_LEFT:
+        case KeyCodes.KEY_RIGHT:
+        case KeyCodes.KEY_UP:
+        case KeyCodes.KEY_DOWN:
+        case KeyCodes.KEY_TAB:
+        case KeyCodes.KEY_ESCAPE:
+        case KeyCodes.KEY_HOME:
+        case KeyCodes.KEY_END:
+            return true;
+        }
+        return false;
     }
 
     private boolean isControlKey(int keyCode) {
