@@ -7,6 +7,8 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.vaadin.client.BrowserInfo;
+import com.vaadin.client.VConsole;
 import com.vaadin.client.ui.VTextField;
 
 public class BlockingTextFieldWidget extends VTextField {
@@ -25,9 +27,11 @@ public class BlockingTextFieldWidget extends VTextField {
         @Override
         public void onKeyPress(KeyPressEvent event) {
             if (isReadOnly() || !isEnabled()) {
+                //VConsole.log("onKeyPress: readonly / not enabled, ignoring");
                 return;
             }
             if (isCopyOrPasteEvent(event)) {
+                //VConsole.log("onKeyPress: is paste event, canceling");
                 cancelKey();
                 return;
             }
@@ -38,7 +42,8 @@ public class BlockingTextFieldWidget extends VTextField {
                 return;
             }
             String newText = valueAfterKeyPress(event.getCharCode());
-            if (!isValueValid(newText)) {
+            if (!isValueValid(newText, true)) {
+                //VConsole.log("onKeyPress: " + newText + "is not valid, canceling");
                 cancelKey();
             }
 
@@ -51,10 +56,13 @@ public class BlockingTextFieldWidget extends VTextField {
             // check if keystroke combination would affect validity by deletion / addition
             int keyCode = event.getNativeEvent().getKeyCode();
             if (isIgnorableOnKeyDown(keyCode)) {
+                //VConsole.log("Ignorable on keydown, no action");
                 return;
             }
+            boolean doLengthCheck = false;
             StringBuilder modified = new StringBuilder(getText());
             if ((keyCode == KeyCodes.KEY_DELETE)) {
+                doLengthCheck = true;
                 // delete one character or selection
                 if (getCursorPos() == getText().length()) {
                     // pressed delete at the end -> does nothing
@@ -66,6 +74,7 @@ public class BlockingTextFieldWidget extends VTextField {
                     modified = modified.deleteCharAt(getCursorPos());
                 }
             } else if (keyCode == KeyCodes.KEY_BACKSPACE) {
+                doLengthCheck = true;
                 // backspace: delete previous character or selected text
                 if (getText() == null || getText().length() == 0) {
                     return;
@@ -76,10 +85,11 @@ public class BlockingTextFieldWidget extends VTextField {
                     modified = modified.deleteCharAt(getCursorPos() - 1);
                 }
             } else if ((keyCode == KeyCodes.KEY_X && event.isControlKeyDown() && (getSelectionLength() > 0))) {
-                // cut from keyboard: delete selected text
+                doLengthCheck = true;
                 modified = modified.delete(getCursorPos(), getCursorPos() + getSelectionLength());
 
             } else if (getSelectionLength() > 0 && (!event.isAnyModifierKeyDown())) {
+                doLengthCheck = true;
                 // type a character when there is a selection: replace selected text
                 modified = modified.delete(getCursorPos(), getCursorPos() + getSelectionLength()).insert(getCursorPos(), (char) event.getNativeKeyCode());
             } else {
@@ -89,7 +99,8 @@ public class BlockingTextFieldWidget extends VTextField {
             }
 
             // check validity of modified string
-            if (!isValueValid(modified.toString())) {
+            if (!isValueValid(modified.toString(), doLengthCheck)) {
+                //VConsole.log("onKeyDown, " + modified.toString() + " is not valid -> canceling");
                 cancelKey();
                 return;
             }
@@ -98,8 +109,8 @@ public class BlockingTextFieldWidget extends VTextField {
     };
 
     public BlockingTextFieldWidget() {
-        alphanum = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        alphanum += alphanum.toLowerCase();
+        alphanum = "ABCDEFGHIJKLMNOPQRSTUVWXYZÖÄÜ";
+        alphanum += alphanum.toLowerCase() + "ß";
         alphanum += "1234567890";
         limitedSpecialCharacters = "-+#.,<>|;:_'*";
         setStyleName("blocking-text-field");
@@ -124,8 +135,8 @@ public class BlockingTextFieldWidget extends VTextField {
         }
     }
 
-    private boolean isValueValid(String newText) {
-        if (withinLengthBounds(newText)) {
+    private boolean isValueValid(String newText, boolean doLengthCheck) {
+        if (doLengthCheck && !withinLengthBounds(newText)) {
             return false;
         }
         if (allAllowed) {
@@ -158,17 +169,20 @@ public class BlockingTextFieldWidget extends VTextField {
     }
 
     private boolean withinLengthBounds(String newText) {
+        String previous = getText() == null ? "" : getText();
         if (minCharacterCount >= 0) {
-            if (newText.length() < minCharacterCount) {
-                return true;
+            // if new text would be shorter than minimum and length is not increasing, not within bounds
+            if ((newText.length() < minCharacterCount) && (previous.length() >= newText.length()) ) {
+                return false;
             }
         }
         if (maxCharacterCount >= 0) {
-            if (newText.length() > maxCharacterCount) {
-                return true;
+            // if new text would be longer than maximum and length is not decreasing, not within bounds
+            if ((newText.length() > maxCharacterCount) && (previous.length() <= newText.length()) ) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     private String valueAfterKeyPress(char charCode) {
@@ -202,8 +216,18 @@ public class BlockingTextFieldWidget extends VTextField {
     }
 
     private boolean isControlKey(int keyCode) {
+        BrowserInfo browser = BrowserInfo.get();
+        // Firefox handles left/right differently
+        if (browser.isFirefox()) {
+            switch (keyCode) {
+            case KeyCodes.KEY_LEFT:
+            case KeyCodes.KEY_RIGHT:
+            case KeyCodes.KEY_HOME:
+            case KeyCodes.KEY_END:
+                return true;
+            }
+        }
         switch (keyCode) {
-        case KeyCodes.KEY_RIGHT:
         case KeyCodes.KEY_BACKSPACE:
         case KeyCodes.KEY_TAB:
         case KeyCodes.KEY_ENTER:
