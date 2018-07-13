@@ -8,6 +8,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Alignment;
@@ -32,7 +33,6 @@ public class DemoUI extends UI
         final VerticalLayout layout = new VerticalLayout();
         layout.setStyleName("demoContentLayout");
         layout.setSizeFull();
-
 
         final BlockingTextField minmax = new BlockingTextField();
         minmax.setCaption("Min 2, max 4 characters, all allowed");
@@ -60,6 +60,20 @@ public class DemoUI extends UI
         specialAlphanumMax.setValue("<>+A1");
         layout.addComponent(specialAlphanumMax);
 
+        final BlockingTextField tooFewCharacters = new BlockingTextField();
+        tooFewCharacters.setCaption("Initially too few characters, minimum 3");
+        tooFewCharacters.setAllowedInputTypes(true, true, true);
+        tooFewCharacters.setMinCharacterCount(3);
+
+        layout.addComponent(tooFewCharacters);
+
+        final BlockingTextField tooManyCharacters = new BlockingTextField();
+        tooManyCharacters.setCaption("Initially too many character, maximum 2");
+        tooManyCharacters.setAllowedInputTypes(true, true, true);
+        tooManyCharacters.setValue("1234");
+        tooManyCharacters.setMaxCharacterCount(2);
+
+        layout.addComponent(tooManyCharacters);
 
 
         setContent(layout);
