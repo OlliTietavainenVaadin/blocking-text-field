@@ -8,7 +8,6 @@ import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.vaadin.client.BrowserInfo;
-import com.vaadin.client.VConsole;
 import com.vaadin.client.ui.VTextField;
 
 public class BlockingTextFieldWidget extends VTextField {
@@ -20,7 +19,8 @@ public class BlockingTextFieldWidget extends VTextField {
     private boolean specialCharactersAllowed = true;
     private String alphanum;
     private String limitedSpecialCharacters;
-    private String allowedCharacters;
+    private String combinedAllowedCharacters;
+    private String allowedCharacters = null;
 
     private KeyPressHandler keyPressHandler = new KeyPressHandler() {
 
@@ -142,15 +142,11 @@ public class BlockingTextFieldWidget extends VTextField {
         if (allAllowed) {
             return true;
         }
-        else if (!alphaNumericAllowed && !specialCharactersAllowed) {
-            return false;
-        }
         // using looping because GWT regex support is not great
         // if alphanumerics are not allowed and one is found, not valid
 
-
         // if alphanumerics are not allowed but limited special characters are:
-        if (!containsOnlyFromList(newText, allowedCharacters)) {
+        if (!containsOnlyFromList(newText, combinedAllowedCharacters)) {
             return false;
         } else {
             //VConsole.log(newText + " is valid, only characters from " + allowedCharacters);
@@ -172,13 +168,13 @@ public class BlockingTextFieldWidget extends VTextField {
         String previous = getText() == null ? "" : getText();
         if (minCharacterCount >= 0) {
             // if new text would be shorter than minimum and length is not increasing, not within bounds
-            if ((newText.length() < minCharacterCount) && (previous.length() >= newText.length()) ) {
+            if ((newText.length() < minCharacterCount) && (previous.length() >= newText.length())) {
                 return false;
             }
         }
         if (maxCharacterCount >= 0) {
             // if new text would be longer than maximum and length is not decreasing, not within bounds
-            if ((newText.length() > maxCharacterCount) && (previous.length() <= newText.length()) ) {
+            if ((newText.length() > maxCharacterCount) && (previous.length() <= newText.length())) {
                 return false;
             }
         }
@@ -195,7 +191,6 @@ public class BlockingTextFieldWidget extends VTextField {
             return previousText.substring(0, index) + charCode + previousText.substring(index, previousText.length());
         }
     }
-
 
     private boolean isIgnorableOnKeyDown(int keyCode) {
         switch (keyCode) {
@@ -247,8 +242,11 @@ public class BlockingTextFieldWidget extends VTextField {
         if (alphaNumericAllowed) {
             temp += alphanum;
         }
+        if (allowedCharacters != null) {
+            temp += allowedCharacters;
+        }
 
-       allowedCharacters = temp;
+        combinedAllowedCharacters = temp;
     }
 
     public int getMinCharacterCount() {
@@ -265,6 +263,10 @@ public class BlockingTextFieldWidget extends VTextField {
 
     public void setMaxCharacterCount(int maxCharacterCount) {
         this.maxCharacterCount = maxCharacterCount;
+    }
+
+    public void setAllowedCharacters(String allowedCharacters) {
+        this.allowedCharacters = allowedCharacters;
     }
 
     public void setAllAllowed(boolean allAllowed) {
