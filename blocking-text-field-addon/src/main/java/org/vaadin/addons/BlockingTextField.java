@@ -52,4 +52,8 @@ public class BlockingTextField extends TextField {
         getState().alphaNumericAllowed = alphanumeric;
         getState().specialCharactersAllowed = specialCharacters;
     }
+
+    public void setAllowedCharacters(String allowedCharacters) {
+        getState().allowedCharacters = allowedCharacters;
+    }
 }

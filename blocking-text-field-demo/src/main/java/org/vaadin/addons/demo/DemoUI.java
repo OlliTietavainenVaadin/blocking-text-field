@@ -75,6 +75,13 @@ public class DemoUI extends UI
 
         layout.addComponent(tooManyCharacters);
 
+        final BlockingTextField customAllowedCharacters = new BlockingTextField();
+        customAllowedCharacters.setCaption("Allowed characters: [a-zA-Z0-9äöüßÄÖÜ.,-+/#<>|;:_'*] and Space");
+        customAllowedCharacters.setAllowedInputTypes(false, false, false);
+        String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        customAllowedCharacters.setAllowedCharacters(alpha + alpha.toLowerCase() + "ÖÄÜöäüß0123456789.,-+/#<>|;:_'* ");
+        layout.addComponent(customAllowedCharacters);
 
         setContent(layout);
     }

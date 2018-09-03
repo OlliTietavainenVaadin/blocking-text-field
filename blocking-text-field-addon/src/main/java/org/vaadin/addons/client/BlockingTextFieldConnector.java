@@ -45,6 +45,7 @@ public class BlockingTextFieldConnector extends TextFieldConnector {
         getWidget().setAllAllowed(getState().allAllowed);
         getWidget().setAlphaNumericAllowed(getState().alphaNumericAllowed);
         getWidget().setSpecialCharactersAllowed(getState().specialCharactersAllowed);
+        getWidget().setAllowedCharacters(getState().allowedCharacters);
         getWidget().updateAllowedCharactersList();
     }
 }
