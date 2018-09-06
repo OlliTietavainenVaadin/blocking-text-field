@@ -6,9 +6,9 @@ public class BlockingTextFieldState extends AbstractTextFieldState {
 
     public int minCharacterCount = -1;
     public int maxCharacterCount = -1;
-    public boolean allAllowed = true;
-    public boolean alphaNumericAllowed = true;
-    public boolean specialCharactersAllowed = true;
+    public boolean allAllowed = false;
+    public boolean alphaNumericAllowed = false;
+    public boolean specialCharactersAllowed = false;
     public String allowedCharacters = null;
 
 }
