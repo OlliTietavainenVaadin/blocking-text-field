@@ -1,5 +1,6 @@
 package org.vaadin.addons.demo;
 
+import org.vaadin.addons.BlockingDateField;
 import org.vaadin.addons.BlockingTextField;
 
 import javax.servlet.annotation.WebServlet;
@@ -82,6 +83,10 @@ public class DemoUI extends UI
 
         customAllowedCharacters.setAllowedCharacters(alpha + alpha.toLowerCase() + "ÖÄÜöäüß0123456789.,-+/#<>|;:_'* ");
         layout.addComponent(customAllowedCharacters);
+
+        BlockingDateField dateField = new BlockingDateField();
+        layout.addComponent(dateField);
+
 
         setContent(layout);
     }

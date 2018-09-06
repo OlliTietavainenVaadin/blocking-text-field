@@ -7,7 +7,6 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.vaadin.client.BrowserInfo;
 import com.vaadin.client.ui.VTextField;
 
 public class BlockingTextFieldWidget extends VTextField {
@@ -30,18 +29,18 @@ public class BlockingTextFieldWidget extends VTextField {
                 //VConsole.log("onKeyPress: readonly / not enabled, ignoring");
                 return;
             }
-            if (isCopyOrPasteEvent(event)) {
+            if (BlockingUtils.isCopyOrPasteEvent(event)) {
                 //VConsole.log("onKeyPress: is paste event, canceling");
                 cancelKey();
                 return;
             }
 
             int keyCode = event.getNativeEvent().getKeyCode();
-            if (isControlKey(keyCode)) {
+            if (BlockingUtils.isControlKey(keyCode)) {
                 // treat any control key normally; delete, backspace etc. are handled in keyDownHandler
                 return;
             }
-            String newText = valueAfterKeyPress(event.getCharCode());
+            String newText = BlockingUtils.valueAfterKeyPress(event.getCharCode(), BlockingTextFieldWidget.this);
             if (!isValueValid(newText, true)) {
                 //VConsole.log("onKeyPress: " + newText + "is not valid, canceling");
                 cancelKey();
@@ -55,7 +54,7 @@ public class BlockingTextFieldWidget extends VTextField {
         public void onKeyDown(KeyDownEvent event) {
             // check if keystroke combination would affect validity by deletion / addition
             int keyCode = event.getNativeEvent().getKeyCode();
-            if (isIgnorableOnKeyDown(keyCode)) {
+            if (BlockingUtils.isIgnorableOnKeyDown(keyCode)) {
                 //VConsole.log("Ignorable on keydown, no action");
                 return;
             }
@@ -119,13 +118,6 @@ public class BlockingTextFieldWidget extends VTextField {
         sinkEvents(Event.ONPASTE);
     }
 
-    private boolean isCopyOrPasteEvent(KeyPressEvent evt) {
-        if (evt.isControlKeyDown()) {
-            return Character.toString(evt.getCharCode()).toLowerCase().equals("c") || Character.toString(evt.getCharCode()).toLowerCase().equals("v");
-        }
-        return false;
-    }
-
     @Override
     public void onBrowserEvent(Event event) {
         if (DOM.eventGetType(event) == Event.ONPASTE) {
@@ -136,7 +128,7 @@ public class BlockingTextFieldWidget extends VTextField {
     }
 
     private boolean isValueValid(String newText, boolean doLengthCheck) {
-        if (doLengthCheck && !withinLengthBounds(newText)) {
+        if (doLengthCheck && !BlockingUtils.withinLengthBounds(newText, this, minCharacterCount, maxCharacterCount)) {
             return false;
         }
         if (allAllowed) {
@@ -146,91 +138,13 @@ public class BlockingTextFieldWidget extends VTextField {
         // if alphanumerics are not allowed and one is found, not valid
 
         // if alphanumerics are not allowed but limited special characters are:
-        if (!containsOnlyFromList(newText, combinedAllowedCharacters)) {
+        if (!BlockingUtils.containsOnlyFromList(newText, combinedAllowedCharacters)) {
             return false;
         } else {
             //VConsole.log(newText + " is valid, only characters from " + allowedCharacters);
         }
 
         return true;
-    }
-
-    private boolean containsOnlyFromList(String text, String listToCheck) {
-        for (int i = 0; i < text.length(); i++) {
-            if (listToCheck.indexOf(text.charAt(i)) < 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean withinLengthBounds(String newText) {
-        String previous = getText() == null ? "" : getText();
-        if (minCharacterCount >= 0) {
-            // if new text would be shorter than minimum and length is not increasing, not within bounds
-            if ((newText.length() < minCharacterCount) && (previous.length() >= newText.length())) {
-                return false;
-            }
-        }
-        if (maxCharacterCount >= 0) {
-            // if new text would be longer than maximum and length is not decreasing, not within bounds
-            if ((newText.length() > maxCharacterCount) && (previous.length() <= newText.length())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private String valueAfterKeyPress(char charCode) {
-        int index = getCursorPos();
-        String previousText = getText();
-
-        if (getSelectionLength() > 0) {
-            return previousText.substring(0, index) + charCode + previousText.substring(index + getSelectionLength(), previousText.length());
-        } else {
-            return previousText.substring(0, index) + charCode + previousText.substring(index, previousText.length());
-        }
-    }
-
-    private boolean isIgnorableOnKeyDown(int keyCode) {
-        switch (keyCode) {
-        case KeyCodes.KEY_SHIFT:
-        case KeyCodes.KEY_ALT:
-        case KeyCodes.KEY_CTRL:
-        case KeyCodes.KEY_LEFT:
-        case KeyCodes.KEY_RIGHT:
-        case KeyCodes.KEY_UP:
-        case KeyCodes.KEY_DOWN:
-        case KeyCodes.KEY_TAB:
-        case KeyCodes.KEY_ESCAPE:
-        case KeyCodes.KEY_HOME:
-        case KeyCodes.KEY_END:
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isControlKey(int keyCode) {
-        BrowserInfo browser = BrowserInfo.get();
-        // Firefox handles left/right differently
-        if (browser.isFirefox()) {
-            switch (keyCode) {
-            case KeyCodes.KEY_LEFT:
-            case KeyCodes.KEY_RIGHT:
-            case KeyCodes.KEY_HOME:
-            case KeyCodes.KEY_END:
-                return true;
-            }
-        }
-        switch (keyCode) {
-        case KeyCodes.KEY_BACKSPACE:
-        case KeyCodes.KEY_TAB:
-        case KeyCodes.KEY_ENTER:
-        case KeyCodes.KEY_ESCAPE:
-            return true;
-        }
-
-        return false;
     }
 
     public void updateAllowedCharactersList() {
