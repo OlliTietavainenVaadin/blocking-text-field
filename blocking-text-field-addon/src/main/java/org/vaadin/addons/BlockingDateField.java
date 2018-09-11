@@ -19,4 +19,25 @@ public class BlockingDateField extends DateField {
     protected BlockingDateFieldState getState() {
         return (BlockingDateFieldState) super.getState();
     }
+
+   /**
+     * Set allowed input types. Defaults to all.
+     *
+     * @param all
+     *     Allow any type. If true, ignore other values.
+     * @param alphanumeric
+     *     Allow alphanumeric characters.
+     * @param specialCharacters
+     *     Allow characters <code>+-#.,&lt;&gt;|&amp;:_'*</code>
+     */
+    public void setAllowedInputTypes(boolean all, boolean alphanumeric, boolean specialCharacters) {
+        getState().allAllowed = all;
+        getState().alphaNumericAllowed = alphanumeric;
+        getState().specialCharactersAllowed = specialCharacters;
+    }
+
+    public void setAllowedCharacters(String allowedCharacters) {
+        getState().allowedCharacters = allowedCharacters;
+    }
+
 }

@@ -9,7 +9,6 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.TextBox;
-import com.vaadin.client.VConsole;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.datefield.DateFieldConnector;
 import com.vaadin.shared.ui.Connect;
@@ -23,6 +22,8 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
     private boolean alphaNumericAllowed;
     private boolean specialCharactersAllowed;
     private String allowedCharacters;
+    private String alphanum;
+    private String limitedSpecialCharacters;
     private String combinedAllowedCharacters;
 
     public String getText() {
@@ -36,10 +37,14 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
     @Override
     protected void init() {
         super.init();
+        alphanum = "ABCDEFGHIJKLMNOPQRSTUVWXYZÖÄÜ";
+        alphanum += alphanum.toLowerCase() + "ß";
+        alphanum += "1234567890";
+        limitedSpecialCharacters = "-+#.,<>|;:_'*";
         KeyDownHandler keyDownHandler = new KeyDownHandler() {
             @Override
             public void onKeyDown(KeyDownEvent event) {
-                // TODO: getWidget().text.getSelectionLength() -> variable
+                TextBox text = getWidget().text;
                 // check if keystroke combination would affect validity by deletion / addition
                 int keyCode = event.getNativeEvent().getKeyCode();
                 if (BlockingUtils.isIgnorableOnKeyDown(keyCode)) {
@@ -56,7 +61,7 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
                         return;
                     }
                     if (getWidget().text.getSelectionLength() > 0) {
-                        modified = modified.delete(getCursorPos(), getCursorPos() + getWidget().text.getSelectionLength());
+                        modified = modified.delete(getCursorPos(), getCursorPos() + text.getSelectionLength());
                     } else {
                         modified = modified.deleteCharAt(getCursorPos());
                     }
@@ -67,18 +72,19 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
                         return;
                     }
                     if (getWidget().text.getSelectionLength() > 0) {
-                        modified = modified.delete(getCursorPos(), getCursorPos() + getWidget().text.getSelectionLength());
+                        modified = modified.delete(getCursorPos(), getCursorPos() + text.getSelectionLength());
                     } else {
                         modified = modified.deleteCharAt(getCursorPos() - 1);
                     }
-                } else if ((keyCode == KeyCodes.KEY_X && event.isControlKeyDown() && (getWidget().text.getSelectionLength() > 0))) {
+                } else if ((keyCode == KeyCodes.KEY_X && event.isControlKeyDown() && (text.getSelectionLength() > 0))) {
                     doLengthCheck = true;
-                    modified = modified.delete(getCursorPos(), getCursorPos() + getWidget().text.getSelectionLength());
+                    modified = modified.delete(getCursorPos(), getCursorPos() + text.getSelectionLength());
 
                 } else if (getWidget().text.getSelectionLength() > 0 && (!event.isAnyModifierKeyDown())) {
                     doLengthCheck = true;
                     // type a character when there is a selection: replace selected text
-                    modified = modified.delete(getCursorPos(), getCursorPos() + getWidget().text.getSelectionLength()).insert(getCursorPos(), (char) event.getNativeKeyCode());
+                    modified = modified.delete(getCursorPos(), getCursorPos() + text.getSelectionLength())
+                        .insert(getCursorPos(), (char) event.getNativeKeyCode());
                 } else {
                     // no selection -> should be normal keypress
                     //VConsole.log("Got character " + (char) keyCode + ", code: " + keyCode + ", charcode" + event.getNativeEvent().getCharCode() + ", as char" +
@@ -160,7 +166,23 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
         alphaNumericAllowed = getState().alphaNumericAllowed;
         specialCharactersAllowed = getState().specialCharactersAllowed;
         allowedCharacters = getState().allowedCharacters;
-        //getWidget().updateAllowedCharactersList();
+        updateAllowedCharactersList();
+    }
+
+    private void updateAllowedCharactersList() {
+        String temp = "";
+        if (specialCharactersAllowed) {
+            temp += limitedSpecialCharacters;
+        }
+
+        if (alphaNumericAllowed) {
+            temp += alphanum;
+        }
+        if (allowedCharacters != null) {
+            temp += allowedCharacters;
+        }
+
+        combinedAllowedCharacters = temp;
     }
 
 }
