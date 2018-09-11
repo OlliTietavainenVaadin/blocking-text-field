@@ -6,6 +6,7 @@
 	<artifactId>blocking-text-field-demo</artifactId>
 	<packaging>war</packaging>
 	<version>0.5</version>
+
 	<name>MyComponent Add-on Demo</name>
 
 	<prerequisites>
