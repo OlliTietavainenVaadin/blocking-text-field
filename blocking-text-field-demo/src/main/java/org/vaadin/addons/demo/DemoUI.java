@@ -1,5 +1,6 @@
 package org.vaadin.addons.demo;
 
+import org.vaadin.addons.BlockingDateField;
 import org.vaadin.addons.BlockingTextField;
 
 import javax.servlet.annotation.WebServlet;
@@ -36,6 +37,7 @@ public class DemoUI extends UI
 
         final BlockingTextField minmax = new BlockingTextField();
         minmax.setCaption("Min 2, max 4 characters, all allowed");
+
         minmax.setAllowedInputTypes(true,false,false);
         minmax.setValue("12!");
         minmax.setMinCharacterCount(2);
@@ -83,6 +85,12 @@ public class DemoUI extends UI
 
         customAllowedCharacters.setAllowedCharacters(alpha + alpha.toLowerCase() + "ÖÄÜöäüß0123456789.,-+/#<>|;:_'* ");
         layout.addComponent(customAllowedCharacters);
+
+        BlockingDateField dateField = new BlockingDateField();
+        dateField.setCaption("Date field allows only numbers and '/'");
+        dateField.setAllowedCharacters("1234567890/");
+        layout.addComponent(dateField);
+
 
         setContent(layout);
     }
