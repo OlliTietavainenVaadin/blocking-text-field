@@ -39,7 +39,8 @@ public class DemoUI extends UI
 
         final BlockingTextField minmax = new BlockingTextField();
         minmax.setCaption("Min 2, max 4 characters, all allowed");
-        minmax.setAllowedInputTypes(true,true,true);
+
+        minmax.setAllowedInputTypes(true,false,false);
         minmax.setValue("12!");
         minmax.setMinCharacterCount(2);
         minmax.setMaxCharacterCount(4);
