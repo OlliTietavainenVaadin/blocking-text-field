@@ -25,13 +25,14 @@ public class BlockingUtils {
 
     public static boolean isControlKey(int keyCode) {
         BrowserInfo browser = BrowserInfo.get();
-        // Firefox handles left/right differently
+        // Firefox handles left/right etc. differently
         if (browser.isFirefox()) {
             switch (keyCode) {
             case KeyCodes.KEY_LEFT:
             case KeyCodes.KEY_RIGHT:
             case KeyCodes.KEY_HOME:
             case KeyCodes.KEY_END:
+            case KeyCodes.KEY_DELETE:
                 return true;
             }
         }

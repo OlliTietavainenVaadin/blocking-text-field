@@ -5,6 +5,8 @@ import org.vaadin.addons.BlockingTextField;
 
 import javax.servlet.annotation.WebServlet;
 
+import java.util.Date;
+
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -87,6 +89,7 @@ public class DemoUI extends UI
 
         BlockingDateField dateField = new BlockingDateField();
         dateField.setCaption("Date field allows only numbers and '/'");
+        dateField.setValue(new Date());
         dateField.setAllowedCharacters("1234567890/");
         layout.addComponent(dateField);
 
