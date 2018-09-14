@@ -47,6 +47,7 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
                 TextBox text = getWidget().text;
                 // check if keystroke combination would affect validity by deletion / addition
                 int keyCode = event.getNativeEvent().getKeyCode();
+
                 if (BlockingUtils.isIgnorableOnKeyDown(keyCode)) {
                     //VConsole.log("Ignorable on keydown, no action");
                     return;
@@ -92,8 +93,9 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
                 }
 
                 // check validity of modified string
-                if (!isValueValid(modified.toString(), doLengthCheck)) {
-                    //VConsole.log("onKeyDown, " + modified.toString() + " is not valid -> canceling");
+                String mod = modified.toString();
+                if (!isValueValid(mod, doLengthCheck)) {
+                    //VConsole.log("onKeyDown, " + mod + " is not valid -> canceling");
                     cancelKey(event);
                     return;
                 }
@@ -112,7 +114,8 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
 
                 int keyCode = event.getNativeEvent().getKeyCode();
                 if (BlockingUtils.isControlKey(keyCode)) {
-                    // treat any control key normally; delete, backspace etc. are handled in keyDownHandler
+                    // treat any control key normally;
+                    // character deletion via delete, backspace etc. are handled in keyDownHandler
                     return;
                 }
                 String newText = BlockingUtils.valueAfterKeyPress(event.getCharCode(), getWidget().text);
