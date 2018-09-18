@@ -1,3 +1,6 @@
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/blockingtextfield)
+[![Stars on Vaadin Directory](https://img.shields.io/vaadin-directory/star/blockingtextfield.svg)](https://vaadin.com/directory/component/blockingtextfield)
+
 # BlockingTextField
 
 BlockingTextField is a UI component add-on for Vaadin 7. You can specify different types of allowed characters in the TextField.
