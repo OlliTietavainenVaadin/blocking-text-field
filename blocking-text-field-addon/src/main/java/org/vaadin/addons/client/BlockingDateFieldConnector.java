@@ -29,8 +29,8 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
         alphanum += alphanum.toLowerCase() + "ß";
         alphanum += "1234567890";
         limitedSpecialCharacters = "-+#.,<>|;:_'*";
-        KeyDownHandler keyDownHandler = new BlockingUtils.BlockingKeyDownHandler(getWidget().text, state);
-        KeyPressHandler keyPressHandler = new BlockingUtils.BlockingKeyPressHandler(isReadOnly(), isEnabled(), getWidget().text, state);
+        KeyDownHandler keyDownHandler = new BlockingKeyDownHandler(getWidget().text, state);
+        KeyPressHandler keyPressHandler = new BlockingKeyPressHandler(isReadOnly(), isEnabled(), getWidget().text, state);
 
         getWidget().addDomHandler(keyDownHandler, KeyDownEvent.getType());
         getWidget().addDomHandler(keyPressHandler, KeyPressEvent.getType());
