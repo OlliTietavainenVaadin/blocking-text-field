@@ -1,11 +1,16 @@
 package org.vaadin.addons.client;
 
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.vaadin.client.BrowserInfo;
 
 public class BlockingUtils {
+
+    public static void cancelKey(DomEvent event) {
+        event.preventDefault();
+    }
 
     public static boolean containsOnlyFromList(String text, String listToCheck) {
         for (int i = 0; i < text.length(); i++) {

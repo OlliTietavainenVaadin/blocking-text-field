@@ -2,7 +2,6 @@ package org.vaadin.addons.client;
 
 import org.vaadin.addons.BlockingDateField;
 
-import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -53,35 +52,39 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
                     return;
                 }
                 boolean doLengthCheck = false;
+                boolean isDeleting = false;
                 StringBuilder modified = new StringBuilder(getText());
                 if ((keyCode == KeyCodes.KEY_DELETE)) {
                     doLengthCheck = true;
+                    isDeleting = true;
                     // delete one character or selection
                     if (getCursorPos() == getText().length()) {
                         // pressed delete at the end -> does nothing
                         return;
                     }
-                    if (getWidget().text.getSelectionLength() > 0) {
+                    if (text.getSelectionLength() > 0) {
                         modified = modified.delete(getCursorPos(), getCursorPos() + text.getSelectionLength());
                     } else {
                         modified = modified.deleteCharAt(getCursorPos());
                     }
                 } else if (keyCode == KeyCodes.KEY_BACKSPACE) {
+                    isDeleting = true;
                     doLengthCheck = true;
                     // backspace: delete previous character or selected text
                     if (getText() == null || getText().length() == 0) {
                         return;
                     }
-                    if (getWidget().text.getSelectionLength() > 0) {
+                    if (text.getSelectionLength() > 0) {
                         modified = modified.delete(getCursorPos(), getCursorPos() + text.getSelectionLength());
                     } else {
                         modified = modified.deleteCharAt(getCursorPos() - 1);
                     }
                 } else if ((keyCode == KeyCodes.KEY_X && event.isControlKeyDown() && (text.getSelectionLength() > 0))) {
                     doLengthCheck = true;
+                    isDeleting = true;
                     modified = modified.delete(getCursorPos(), getCursorPos() + text.getSelectionLength());
 
-                } else if (getWidget().text.getSelectionLength() > 0 && (!event.isAnyModifierKeyDown())) {
+                } else if (text.getSelectionLength() > 0 && (!event.isAnyModifierKeyDown())) {
                     doLengthCheck = true;
                     // type a character when there is a selection: replace selected text
                     modified = modified.delete(getCursorPos(), getCursorPos() + text.getSelectionLength())
@@ -94,9 +97,9 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
 
                 // check validity of modified string
                 String mod = modified.toString();
-                if (!isValueValid(mod, doLengthCheck)) {
+                if (!isValueValid(mod, doLengthCheck, isDeleting)) {
                     //VConsole.log("onKeyDown, " + mod + " is not valid -> canceling");
-                    cancelKey(event);
+                    BlockingUtils.cancelKey(event);
                     return;
                 }
             }
@@ -108,7 +111,7 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
                     return;
                 }
                 if (BlockingUtils.isCopyOrPasteEvent(event)) {
-                    cancelKey(event);
+                    BlockingUtils.cancelKey(event);
                     return;
                 }
 
@@ -119,9 +122,13 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
                     return;
                 }
                 String newText = BlockingUtils.valueAfterKeyPress(event.getCharCode(), getWidget().text);
-                if (!isValueValid(newText, true)) {
+                boolean isDeleting = false;
+                if (newText.length() < getWidget().text.getText().length()) {
+                    isDeleting = true;
+                }
+                if (!isValueValid(newText, true, isDeleting)) {
                     //VConsole.log("onKeyPress: " + newText + "is not valid, canceling");
-                    cancelKey(event);
+                    BlockingUtils.cancelKey(event);
                 }
             }
         };
@@ -129,11 +136,15 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
         getWidget().addDomHandler(keyPressHandler, KeyPressEvent.getType());
     }
 
-    private boolean isValueValid(String newText, boolean doLengthCheck) {
+    private boolean isValueValid(String newText, boolean doLengthCheck, boolean isDeleting) {
         if (doLengthCheck && !BlockingUtils.withinLengthBounds(newText, getWidget().text, minCharacterCount, maxCharacterCount)) {
             return false;
         }
         if (allAllowed) {
+            return true;
+        }
+        // length check passed -> deleting is okay
+        if (isDeleting) {
             return true;
         }
         // using looping because GWT regex support is not great
@@ -147,10 +158,6 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
         }
 
         return true;
-    }
-
-    private void cancelKey(DomEvent event) {
-        event.preventDefault();
     }
 
     @Override
