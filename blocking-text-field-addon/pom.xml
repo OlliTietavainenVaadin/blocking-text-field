@@ -5,7 +5,7 @@
 	<groupId>org.vaadin.addons</groupId>
 	<artifactId>blocking-text-field</artifactId>
 	<packaging>jar</packaging>
-	<version>0.7</version>
+	<version>0.8</version>
 	<name>BlockingTextField</name>
 
 	<prerequisites>

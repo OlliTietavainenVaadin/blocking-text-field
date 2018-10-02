@@ -23,15 +23,15 @@ public class BlockingKeyPressHandler implements KeyPressHandler {
         if (readOnly || !enabled) {
             return;
         }
-        if (BlockingUtils.isCopyOrPasteEvent(event)) {
-            BlockingUtils.cancelKey(event);
-            return;
-        }
 
         int keyCode = event.getNativeEvent().getKeyCode();
         if (BlockingUtils.isControlKey(keyCode)) {
             // treat any control key normally;
             // character deletion via delete, backspace etc. are handled in keyDownHandler
+            return;
+        }
+        if (BlockingUtils.isFireFoxKeyboardCopyPaste(event)) {
+            // don't block keyboard copy/paste events for Firefox
             return;
         }
         String newText = BlockingUtils.valueAfterKeyPress(event.getCharCode(), text);

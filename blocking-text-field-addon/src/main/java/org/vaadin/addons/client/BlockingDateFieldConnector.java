@@ -2,10 +2,12 @@ package org.vaadin.addons.client;
 
 import org.vaadin.addons.BlockingDateField;
 
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.vaadin.client.VConsole;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.datefield.DateFieldConnector;
 import com.vaadin.shared.ui.Connect;
@@ -34,7 +36,29 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
 
         getWidget().addDomHandler(keyDownHandler, KeyDownEvent.getType());
         getWidget().addDomHandler(keyPressHandler, KeyPressEvent.getType());
+        addPasteHandler(getWidget().text.getElement());
     }
+
+    public void onPasteEvent(NativeEvent event) {
+        String pasteContent = getPasteContent(event);
+        BlockingUtils.handlePaste(getWidget().text, pasteContent, state);
+    }
+
+    public native void addPasteHandler(com.google.gwt.user.client.Element element)/*-{
+        var that = this;
+        element.onpaste = function (e) {
+            e.preventDefault();
+            that.@org.vaadin.addons.client.BlockingDateFieldConnector::onPasteEvent(*)(e)
+        }
+
+    }-*/;
+
+    public native String getPasteContent(NativeEvent event)/*-{
+        var clipboardData, pastedData;
+        clipboardData = event.clipboardData || window.clipboardData;
+        pastedData = clipboardData.getData('Text');
+        return pastedData;
+    }-*/;
 
     @Override
     public BlockingDateFieldState getState() {

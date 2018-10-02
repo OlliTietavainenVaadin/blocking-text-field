@@ -1,5 +1,6 @@
 package org.vaadin.addons.client;
 
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.vaadin.client.ui.VTextField;
@@ -22,10 +23,19 @@ public class BlockingTextFieldWidget extends VTextField {
         sinkEvents(Event.ONPASTE);
     }
 
+    public native String getPasteContent(NativeEvent event)/*-{
+        var clipboardData, pastedData;
+        clipboardData = event.clipboardData || window.clipboardData;
+        pastedData = clipboardData.getData('Text');
+        return pastedData;
+    }-*/;
+
     @Override
     public void onBrowserEvent(Event event) {
         if (DOM.eventGetType(event) == Event.ONPASTE) {
             event.preventDefault();
+            String pasteContent = getPasteContent(event);
+            BlockingUtils.handlePaste(this, pasteContent, state);
         } else {
             super.onBrowserEvent(event);
         }
@@ -70,4 +80,5 @@ public class BlockingTextFieldWidget extends VTextField {
     public void setSpecialCharactersAllowed(boolean specialCharactersAllowed) {
         state.specialCharactersAllowed = specialCharactersAllowed;
     }
+
 }

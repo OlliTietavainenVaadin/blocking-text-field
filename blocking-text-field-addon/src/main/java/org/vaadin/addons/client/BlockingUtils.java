@@ -2,11 +2,10 @@ package org.vaadin.addons.client;
 
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.vaadin.client.BrowserInfo;
+import com.vaadin.client.VConsole;
 
 public class BlockingUtils {
 
@@ -48,11 +47,43 @@ public class BlockingUtils {
         return true;
     }
 
-    public static boolean isCopyOrPasteEvent(KeyPressEvent evt) {
-        if (evt.isControlKeyDown()) {
-            return Character.toString(evt.getCharCode()).toLowerCase().equals("c") || Character.toString(evt.getCharCode()).toLowerCase().equals("v");
+    public static String removeDisallowedCharacters(String original, String allowed) {
+        StringBuilder result = new StringBuilder("");
+        for (int i = 0; i < original.length(); i++) {
+            if (allowed.contains("" + original.charAt(i))) {
+                result.append(original.charAt(i));
+            }
         }
-        return false;
+        return result.toString();
+    }
+
+    public static void handlePaste(TextBoxBase textBox, final String pasteContent, ValidationState state) {
+        if (pasteContent == null || "".equals(pasteContent)) {
+            VConsole.log("Detected paste event, but received no paste content from clipboard");
+            return;
+        }
+        String textGoingToBody = pasteContent;
+        if (!state.allAllowed) {
+            if (!containsOnlyFromList(textGoingToBody, state.combinedAllowedCharacters)) {
+                textGoingToBody = removeDisallowedCharacters(textGoingToBody, state.combinedAllowedCharacters);
+            }
+        }
+        String newText = afterInsertion(textGoingToBody, textBox);
+        if (withinLengthBounds(newText, textBox, state.minCharacterCount, state.maxCharacterCount)) {
+            textBox.setText(newText);
+        }
+    }
+
+    public static String afterInsertion(String textGoingToBody, TextBoxBase textBox) {
+        StringBuilder builder = new StringBuilder(textBox.getValue());
+
+        // remove selected
+        if (textBox.getSelectionLength() > 0) {
+            builder.delete(textBox.getCursorPos(), textBox.getCursorPos() + textBox.getSelectionLength());
+        }
+        builder.insert(textBox.getCursorPos(), textGoingToBody);
+
+        return builder.toString();
     }
 
     public static boolean isControlKey(int keyCode) {
@@ -125,4 +156,10 @@ public class BlockingUtils {
         return false;
     }
 
+    public static boolean isFireFoxKeyboardCopyPaste(KeyPressEvent event) {
+        if (BrowserInfo.get().isFirefox() && event.isControlKeyDown()) {
+            return Character.toString(event.getCharCode()).toLowerCase().equals("c") || Character.toString(event.getCharCode()).toLowerCase().equals("v");
+        }
+        return false;
+    }
 }

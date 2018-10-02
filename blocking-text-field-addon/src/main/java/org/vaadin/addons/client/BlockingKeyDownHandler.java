@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.ui.TextBoxBase;
+import com.vaadin.client.VConsole;
 
 public class BlockingKeyDownHandler implements KeyDownHandler {
 
@@ -27,7 +28,6 @@ public class BlockingKeyDownHandler implements KeyDownHandler {
     public void onKeyDown(KeyDownEvent event) {
         // check if keystroke combination would affect validity by deletion / addition
         int keyCode = event.getNativeEvent().getKeyCode();
-
         if (BlockingUtils.isIgnorableOnKeyDown(keyCode)) {
             //VConsole.log("Ignorable on keydown, no action");
             return;
