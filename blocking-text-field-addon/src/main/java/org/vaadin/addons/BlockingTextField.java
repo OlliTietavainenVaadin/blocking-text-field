@@ -23,7 +23,7 @@ public class BlockingTextField extends TextField {
     }
 
     @Override
-    public void setValue(String newValue) throws ReadOnlyException {
+    public void setValue(String newValue) {
         if (newValue == null) {
             super.setValue(newValue);
             return;
@@ -40,12 +40,9 @@ public class BlockingTextField extends TextField {
     /**
      * Set allowed input types. Defaults to all.
      *
-     * @param all
-     *     Allow any type. If true, ignore other values.
-     * @param alphanumeric
-     *     Allow alphanumeric characters.
-     * @param specialCharacters
-     *     Allow characters <code>+-#.,&lt;&gt;|&amp;:_'*</code>
+     * @param all               Allow any type. If true, ignore other values.
+     * @param alphanumeric      Allow alphanumeric characters.
+     * @param specialCharacters Allow characters <code>+-#.,&lt;&gt;|&amp;:_'*</code>
      */
     public void setAllowedInputTypes(boolean all, boolean alphanumeric, boolean specialCharacters) {
         getState().allAllowed = all;

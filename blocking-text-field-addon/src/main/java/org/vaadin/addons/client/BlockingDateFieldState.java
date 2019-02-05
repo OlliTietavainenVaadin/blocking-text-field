@@ -1,8 +1,8 @@
 package org.vaadin.addons.client;
 
-import com.vaadin.shared.ui.datefield.PopupDateFieldState;
+import com.vaadin.shared.ui.datefield.LocalDateFieldState;
 
-public class BlockingDateFieldState extends PopupDateFieldState {
+public class BlockingDateFieldState extends LocalDateFieldState {
 
     public int minCharacterCount = -1;
     public int maxCharacterCount = -1;

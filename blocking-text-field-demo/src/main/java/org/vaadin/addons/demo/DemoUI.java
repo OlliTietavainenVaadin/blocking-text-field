@@ -1,28 +1,22 @@
 package org.vaadin.addons.demo;
 
+import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.Title;
+import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import org.vaadin.addons.BlockingDateField;
 import org.vaadin.addons.BlockingTextField;
 
 import javax.servlet.annotation.WebServlet;
-
-import java.util.Date;
-
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.Title;
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.annotations.Widgetset;
-import com.vaadin.server.Page;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import java.time.LocalDate;
 
 @Theme("demo")
 @Title("BlockingTextField Add-on Demo")
 @SuppressWarnings("serial")
-public class DemoUI extends UI
-{
+public class DemoUI extends UI {
 
     @WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = DemoUI.class)
@@ -40,7 +34,7 @@ public class DemoUI extends UI
         final BlockingTextField minmax = new BlockingTextField();
         minmax.setCaption("Min 2, max 4 characters, all allowed");
 
-        minmax.setAllowedInputTypes(true,false,false);
+        minmax.setAllowedInputTypes(true, false, false);
         minmax.setValue("12!");
         minmax.setMinCharacterCount(2);
         minmax.setMaxCharacterCount(4);
@@ -90,7 +84,7 @@ public class DemoUI extends UI
 
         BlockingDateField dateField = new BlockingDateField();
         dateField.setCaption("Date field allows only numbers and '/'");
-        dateField.setValue(new Date());
+        dateField.setValue(LocalDate.now());
         dateField.setAllowedCharacters("1234567890/");
         layout.addComponent(dateField);
 

@@ -1,8 +1,8 @@
 package org.vaadin.addons.client;
 
-import com.vaadin.shared.ui.textfield.AbstractTextFieldState;
+import com.vaadin.shared.ui.textfield.TextFieldState;
 
-public class BlockingTextFieldState extends AbstractTextFieldState {
+public class BlockingTextFieldState extends TextFieldState {
 
     public int minCharacterCount = -1;
     public int maxCharacterCount = -1;
