@@ -93,18 +93,19 @@ public class BlockingUtils {
             switch (keyCode) {
             case KeyCodes.KEY_LEFT:
             case KeyCodes.KEY_RIGHT:
-            case KeyCodes.KEY_HOME:
             case KeyCodes.KEY_END:
-            case KeyCodes.KEY_DELETE:
-                return true;
+            case KeyCodes.KEY_DELETE: {
+                    return true;
+                }
             }
         }
         switch (keyCode) {
         case KeyCodes.KEY_BACKSPACE:
         case KeyCodes.KEY_TAB:
         case KeyCodes.KEY_ENTER:
-        case KeyCodes.KEY_ESCAPE:
-            return true;
+        case KeyCodes.KEY_ESCAPE: {
+                return true;
+            }
         }
 
         return false;
