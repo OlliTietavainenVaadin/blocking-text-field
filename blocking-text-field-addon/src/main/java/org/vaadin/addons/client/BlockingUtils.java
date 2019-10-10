@@ -18,7 +18,23 @@ public class BlockingUtils {
             return true;
         }
         // length check passed -> deleting is okay
+        // (but check for the case where text is painted and an invalid character key is pressed)
         if (isDeleting) {
+            String oldText = text.getValue();
+            String oldDisallowedCharacters = removeDisallowedCharacters(oldText, state.combinedAllowedCharacters);
+            String newDisallowedCharacters = getDisallowedCharacters(newText, state.combinedAllowedCharacters);
+
+            // amount of disallowed characters is increasing by selection overriding
+            if (newDisallowedCharacters.length() > oldDisallowedCharacters.length()) {
+                return false;
+            }
+            for (int i = 0; i < newDisallowedCharacters.length(); i++) {
+                char disallowedChar = newDisallowedCharacters.charAt(i);
+                // adding a new disallowed character by selection overwriting
+                if (!oldDisallowedCharacters.contains("" + disallowedChar)) {
+                    return false;
+                }
+            }
             return true;
         }
         // using looping because GWT regex support is not great
@@ -45,6 +61,16 @@ public class BlockingUtils {
             }
         }
         return true;
+    }
+
+    public static String getDisallowedCharacters(String original, String allowed) {
+        StringBuilder result = new StringBuilder("");
+        for (int i = 0; i < original.length(); i++) {
+            if (!allowed.contains("" + original.charAt(i))) {
+                result.append(original.charAt(i));
+            }
+        }
+        return result.toString();
     }
 
     public static String removeDisallowedCharacters(String original, String allowed) {
@@ -87,23 +113,11 @@ public class BlockingUtils {
     }
 
     public static boolean isControlKey(int keyCode) {
-        BrowserInfo browser = BrowserInfo.get();
-        // Firefox handles left/right etc. differently
-        if (browser.isFirefox()) {
-            switch (keyCode) {
-            case KeyCodes.KEY_LEFT:
-            case KeyCodes.KEY_RIGHT:
-            case KeyCodes.KEY_END:
-            case KeyCodes.KEY_DELETE: {
-                    return true;
-                }
-            }
-        }
         switch (keyCode) {
-        case KeyCodes.KEY_BACKSPACE:
-        case KeyCodes.KEY_TAB:
-        case KeyCodes.KEY_ENTER:
-        case KeyCodes.KEY_ESCAPE: {
+            case KeyCodes.KEY_BACKSPACE:
+            case KeyCodes.KEY_TAB:
+            case KeyCodes.KEY_ENTER:
+            case KeyCodes.KEY_ESCAPE: {
                 return true;
             }
         }
@@ -141,18 +155,18 @@ public class BlockingUtils {
 
     public static boolean isIgnorableOnKeyDown(int keyCode) {
         switch (keyCode) {
-        case KeyCodes.KEY_SHIFT:
-        case KeyCodes.KEY_ALT:
-        case KeyCodes.KEY_CTRL:
-        case KeyCodes.KEY_LEFT:
-        case KeyCodes.KEY_RIGHT:
-        case KeyCodes.KEY_UP:
-        case KeyCodes.KEY_DOWN:
-        case KeyCodes.KEY_TAB:
-        case KeyCodes.KEY_ESCAPE:
-        case KeyCodes.KEY_HOME:
-        case KeyCodes.KEY_END:
-            return true;
+            case KeyCodes.KEY_SHIFT:
+            case KeyCodes.KEY_ALT:
+            case KeyCodes.KEY_CTRL:
+            case KeyCodes.KEY_LEFT:
+            case KeyCodes.KEY_RIGHT:
+            case KeyCodes.KEY_UP:
+            case KeyCodes.KEY_DOWN:
+            case KeyCodes.KEY_TAB:
+            case KeyCodes.KEY_ESCAPE:
+            case KeyCodes.KEY_HOME:
+            case KeyCodes.KEY_END:
+                return true;
         }
         return false;
     }
