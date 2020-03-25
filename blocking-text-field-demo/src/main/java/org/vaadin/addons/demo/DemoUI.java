@@ -5,6 +5,7 @@ import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import org.vaadin.addons.BlockingDateField;
@@ -86,6 +87,7 @@ public class DemoUI extends UI {
         dateField.setCaption("Date field allows only numbers and '/'");
         dateField.setValue(LocalDate.now());
         dateField.setAllowedCharacters("1234567890/");
+        dateField.addValueChangeListener(e -> Notification.show("v: " + dateField.getValue()));
         layout.addComponent(dateField);
 
 

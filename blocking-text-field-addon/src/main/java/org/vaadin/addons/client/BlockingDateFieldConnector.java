@@ -1,16 +1,14 @@
 package org.vaadin.addons.client;
 
-import org.vaadin.addons.BlockingDateField;
-
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.vaadin.client.VConsole;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.datefield.DateFieldConnector;
 import com.vaadin.shared.ui.Connect;
+import org.vaadin.addons.BlockingDateField;
 
 @Connect(BlockingDateField.class)
 public class BlockingDateFieldConnector extends DateFieldConnector {
@@ -42,6 +40,8 @@ public class BlockingDateFieldConnector extends DateFieldConnector {
     public void onPasteEvent(NativeEvent event) {
         String pasteContent = getPasteContent(event);
         BlockingUtils.handlePaste(getWidget().text, pasteContent, state);
+        getWidget().updateBufferedValues();
+        getWidget().sendBufferedValues();
     }
 
     public native void addPasteHandler(com.google.gwt.user.client.Element element)/*-{
