@@ -3,7 +3,7 @@
 
 # BlockingTextField
 
-BlockingTextField is a UI component add-on for Vaadin 7. You can specify different types of allowed characters in the TextField.
+BlockingTextField is a UI component addon for Vaadin 7. You can specify different types of allowed characters in the TextField.
 
 ## Building and running demo
 
